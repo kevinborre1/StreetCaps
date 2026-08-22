@@ -1,69 +1,233 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
+import { useState } from "react";
+import "./globals.css";
+
+// Base de datos de ejemplo (podés reemplazar las fotos con las tuyas en la carpeta /public)
+const dbProducts = [
+  { id: 1, name: "Gorra Clásica Negra", type: "Snapback", price: 15000, img: "/gorra1.jpg" },
+  { id: 2, name: "Street Drop #1", type: "Trucker", price: 12000, img: "/gorra2.jpg" },
+  { id: 3, name: "New Era Style Black", type: "Fitted", price: 18000, img: "/gorra3.jpg" },
+  { id: 4, name: "Vintage Grey", type: "Dad Hat", price: 14000, img: "/gorra4.jpg" },
+  { id: 5, name: "Classic White", type: "Snapback", price: 16000, img: "/gorra3.jpg" },
+  { id: 6, name: "Jordan", type: "Dad Hat", price: 14000, img: "/gorra4.jpg" },
+
+
+
+];
+
+const categories = ["Ver Todo", "Snapback", "Trucker", "Fitted", "Dad Hat"];
 
 export default function Home() {
+  const [cart, setCart] = useState([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [activeCategory, setActiveCategory] = useState("Ver Todo");
+
+  // Filtrado de productos
+  const filteredProducts = activeCategory === "Ver Todo" 
+    ? dbProducts 
+    : dbProducts.filter(p => p.type === activeCategory);
+
+  // Funciones del carrito
+  const addToCart = (product) => {
+    setCart((prev) => {
+      const exists = prev.find((item) => item.id === product.id);
+      if (exists) {
+        return prev.map((item) =>
+          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+        );
+      }
+      return [...prev, { ...product, quantity: 1 }];
+    });
+    setIsCartOpen(true);
+  };
+
+  const removeFromCart = (id) => {
+    setCart((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  const total = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
+
+  // Redirección a WhatsApp
+  const handleCheckout = () => {
+    if (cart.length === 0) return;
+    
+    // REEMPLAZAR con el número de la tienda (código de país + número, ej: 5491123456789)
+    const phoneNumber = "5491100000000"; 
+    
+    let message = "Hola Street Caps! 🧢 Quiero hacer el siguiente pedido:\n\n";
+    cart.forEach((item) => {
+      message += `- ${item.name} (${item.type}) x${item.quantity} - $${item.price * item.quantity}\n`;
+    });
+    message += `\n*Total a pagar: $${total}*\n\nMe gustaría coordinar el pago y el envío.`;
+    
+    const encodedMessage = encodeURIComponent(message);
+    window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, "_blank");
+  };
+  const handleInstagramCheckout = async () => {
+    if (cart.length === 0) return;
+    
+    let message = "Hola Street Caps! 🧢 Quiero hacer el siguiente pedido:\n\n";
+    cart.forEach((item) => {
+      message += `- ${item.name} (${item.type}) x${item.quantity} - $${item.price * item.quantity}\n`;
+    });
+    message += `\n*Total a pagar: $${total}*\n\nMe gustaría coordinar el pago y el envío.`;
+    
+    try {
+      // Intentamos copiar el mensaje al portapapeles
+      await navigator.clipboard.writeText(message);
+      alert("¡Pedido copiado! Te redirigimos al chat. Solo tenés que poner 'Pegar' y enviarnos el mensaje.");
+    } catch (err) {
+      console.error("No se pudo copiar automáticamente", err);
+    }
+    
+    // Abrimos el chat de Instagram directamente (reemplazá con tu usuario si cambia)
+    window.open("https://ig.me/m/streetcaps.ok", "_blank");
+  };
+
+  const handleMercadoPagoCheckout = async () => {
+    if (cart.length === 0) return;
+    
+    let message = "Hola Street Caps! 🧢 Ya realicé el pago de mi pedido:\n\n";
+    cart.forEach((item) => {
+      message += `- ${item.name} (${item.type}) x${item.quantity}\n`;
+    });
+    message += `\n*Total pagado: $${total}*`;
+    
+    try {
+      // Copiamos el pedido al portapapeles para que te lo manden con el comprobante
+      await navigator.clipboard.writeText(message);
+      
+      // Alerta con instrucciones claras para el cliente
+      alert(`El total de tu pedido es $${total}.\n\nTe vamos a redirigir a Mercado Pago. Por favor, ingresá este monto exacto.\n\n(El detalle de tu pedido se copió automáticamente para que nos lo mandes junto con el comprobante).`);
+      
+      // ACÁ PONES TU LINK DE MERCADO PAGO
+      // Se saca desde la app de MP -> Cobrar con link -> Crear link sin monto fijo (tu perfil)
+      window.open("https://link.mercadopago.com.ar/streetcaps", "_blank");
+    } catch (err) {
+      console.error("Error", err);
+    }
+  };
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>
-            To get started, edit the{" "}
-            <code className={styles.code}>page.js</code> file.
-          </h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <main>
+      {/* Top Banner */}
+      <div className="top-banner">
+        📦 Envíos a todo el país | Elegí tu próxima gorra
+      </div>
+
+      {/* Navbar */}
+      <nav className="navbar">
+        <div className="logo">STREET CAPS</div>
+        <button 
+          className="pill" 
+          onClick={() => setIsCartOpen(true)}
+          style={{ border: 'none', background: '#fff', color: '#000', fontWeight: 'bold' }}
+        >
+          Carrito ({cart.reduce((acc, item) => acc + item.quantity, 0)})
+        </button>
+      </nav>
+     {/* NUEVA SECCIÓN DE BIENVENIDA CON IMAGEN */}
+      <header className="hero-section">
+        <div className="hero-content">
+          <h1 className="hero-title">Estilo Urbano Premium</h1>
+          <p className="hero-subtitle">
+            Los clásicos del streetwear, elevados. Descubrí nuestra nueva colección de gorras y marcá la diferencia.
           </p>
+          <button className="btn-hero" onClick={() => window.scrollTo({ top: window.innerHeight * 0.6, behavior: 'smooth' })}>
+            Ver colección
+          </button>
         </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+      </header>
+
+      {/* Título de la sección de productos */}
+      <h2 className="section-title">Gorras Street Caps</h2>
+
+      {/* Filtros (esto ya lo tenés) */}
+      <div className="filters"></div>
+      {/* Filtros */}
+      <div className="filters">
+        {categories.map((cat) => (
+          <button
+            key={cat}
+            className={`pill ${activeCategory === cat ? "active" : ""}`}
+            onClick={() => setActiveCategory(cat)}
           >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            {cat}
+          </button>
+        ))}
+      </div>
+
+      {/* Grilla de Productos */}
+      <section className="product-grid">
+        {filteredProducts.map((product) => (
+          <div key={product.id} className="product-card">
+            <div className="image-placeholder">
+              {/* Usar etiqueta <img> estándar o <Image> de Next.js si tenés las rutas configuradas */}
+              {product.img ? (
+                <img src={product.img} alt={product.name} />
+              ) : (
+                <span style={{ color: '#444' }}>Foto Gorra</span>
+              )}
+            </div>
+            <div className="product-info">
+              <p className="product-type">{product.type}</p>
+              <h3 className="product-name">{product.name}</h3>
+              <p className="product-price">${product.price.toLocaleString("es-AR")}</p>
+              <button className="btn-add" onClick={() => addToCart(product)}>
+                Agregar al carrito
+              </button>
+            </div>
+          </div>
+        ))}
+      </section>
+
+      {/* Cart Modal / Sidebar */}
+      {isCartOpen && (
+        <div className="cart-modal">
+          <div className="cart-header">
+            <h2>Tu Pedido</h2>
+            <button className="close-btn" onClick={() => setIsCartOpen(false)}>×</button>
+          </div>
+          
+          <div className="cart-items">
+            {cart.length === 0 ? (
+              <p style={{ color: 'var(--text-secondary)' }}>El carrito está vacío.</p>
+            ) : (
+              cart.map((item) => (
+                <div key={item.id} className="cart-item">
+                  <div>
+                    <p style={{ fontWeight: 'bold' }}>{item.name}</p>
+                    <p style={{ fontSize: '0.8rem', color: '#a0a0a0' }}>Cant: {item.quantity}</p>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <p>${(item.price * item.quantity).toLocaleString("es-AR")}</p>
+                    <button 
+                      onClick={() => removeFromCart(item.id)}
+                      style={{ background: 'none', border: 'none', color: '#ff4444', fontSize: '0.8rem', cursor: 'pointer', marginTop: '5px' }}
+                    >
+                      Quitar
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        {cart.length > 0 && (
+        <div className="cart-footer">
+          <div className="cart-total">
+            <span>Total:</span>
+            <span>${total.toLocaleString("es-AR")}</span>
+          </div>
+          <button className="btn-whatsapp" onClick={handleCheckout}>
+            Pedir por WhatsApp
+          </button>
+          <button className="btn-mercadopago" onClick={handleMercadoPagoCheckout}>
+            Pagar con Mercado Pago
+          </button>
         </div>
-      </main>
-    </div>
+      )}
+      
+      </div>
+    )}
+    </main>
   );
 }
