@@ -52,7 +52,7 @@ export default function Home() {
     if (cart.length === 0) return;
     
     // REEMPLAZAR con el número de la tienda (código de país + número, ej: 5491123456789)
-    const phoneNumber = "5491100000000"; 
+    const phoneNumber = "5491133763050"; 
     
     let message = "Hola Street Caps! 🧢 Quiero hacer el siguiente pedido:\n\n";
     cart.forEach((item) => {
