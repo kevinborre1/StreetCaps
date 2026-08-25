@@ -1,28 +1,38 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./globals.css";
 
 // Base de datos de ejemplo (podés reemplazar las fotos con las tuyas en la carpeta /public)
-const dbProducts = [
-  { id: 1, name: "Gorra Clásica Negra", type: "Snapback", price: 15000, img: "/gorra1.jpg",stock: 5 },
-  { id: 2, name: "Street Drop #1", type: "Trucker", price: 12000, img: "/gorra2.jpg",stock: 3 },
-  { id: 3, name: "New Era Style Black", type: "Fitted", price: 18000, img: "/gorra3.jpg",stock: 2 },
-  { id: 4, name: "Vintage Grey", type: "Dad Hat", price: 14000, img: "/gorra4.jpg",stock: 4 },
-  { id: 5, name: "Classic White", type: "Snapback", price: 16000, img: "/gorra3.jpg",stock: 6 },
-  { id: 6, name: "Jordan", type: "Dad Hat", price: 14000, img: "/gorra4.jpg",stock: 1 },
-];
 
 const categories = ["Ver Todo", "Snapback", "Trucker", "Fitted", "Dad Hat"];
 
-export default function Home() {
+export default function Tienda() {
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [activeCategory, setActiveCategory] = useState("Ver Todo");
+  const [filter, setFilter] = useState("Ver Todo");
+  
+  // 1. Ahora los productos son un estado dinámico (arranca vacío)
+  const [dbProducts, setDbProducts] = useState([]);
 
-  // Filtrado de productos
-  const filteredProducts = activeCategory === "Ver Todo" 
-    ? dbProducts 
-    : dbProducts.filter(p => p.type === activeCategory);
+  // 2. Este hook se ejecuta apenas el usuario entra a la página
+  useEffect(() => {
+    const cargarProductos = async () => {
+      try {
+        // Le hacemos la petición GET a tu API de Spring Boot
+        const response = await fetch("http://localhost:8080/api/productos");
+        
+        if (response.ok) {
+          const data = await response.json();
+          // Guardamos las gorras de la base de datos para que se muestren en pantalla
+          setDbProducts(data);
+        }
+      } catch (error) {
+        console.error("Error al conectar con la API:", error);
+      }
+    };
+
+    cargarProductos();
+  }, []); // Los corchetes vacíos significan que esto se ejecuta una sola vez al entrar
 
   // Funciones del carrito
 const addToCart = (product) => {
@@ -137,7 +147,7 @@ const addToCart = (product) => {
         <div className="hero-content">
           <h1 className="hero-title">Caps for your everyday style.</h1>
           <p className="hero-subtitle">
-            Los clásicos del streetwear, elevados. Descubrí nuestra nueva colección de gorras y marcá la diferencia.
+            Los clásicos del streetwear, elevados. Descubrí nuestra colección de gorras y marcá la diferencia.
           </p>
           <button className="btn-hero" onClick={() => window.scrollTo({ top: window.innerHeight * 0.6, behavior: 'smooth' })}>
             Ver colección
