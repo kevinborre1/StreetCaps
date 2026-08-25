@@ -4,12 +4,12 @@ import "./globals.css";
 
 // Base de datos de ejemplo (podés reemplazar las fotos con las tuyas en la carpeta /public)
 const dbProducts = [
-  { id: 1, name: "Gorra Clásica Negra", type: "Snapback", price: 15000, img: "/gorra1.jpg" },
-  { id: 2, name: "Street Drop #1", type: "Trucker", price: 12000, img: "/gorra2.jpg" },
-  { id: 3, name: "New Era Style Black", type: "Fitted", price: 18000, img: "/gorra3.jpg" },
-  { id: 4, name: "Vintage Grey", type: "Dad Hat", price: 14000, img: "/gorra4.jpg" },
-  { id: 5, name: "Classic White", type: "Snapback", price: 16000, img: "/gorra3.jpg" },
-  { id: 6, name: "Jordan", type: "Dad Hat", price: 14000, img: "/gorra4.jpg" },
+  { id: 1, name: "Gorra Clásica Negra", type: "Snapback", price: 15000, img: "/gorra1.jpg",stock: 5 },
+  { id: 2, name: "Street Drop #1", type: "Trucker", price: 12000, img: "/gorra2.jpg",stock: 3 },
+  { id: 3, name: "New Era Style Black", type: "Fitted", price: 18000, img: "/gorra3.jpg",stock: 2 },
+  { id: 4, name: "Vintage Grey", type: "Dad Hat", price: 14000, img: "/gorra4.jpg",stock: 4 },
+  { id: 5, name: "Classic White", type: "Snapback", price: 16000, img: "/gorra3.jpg",stock: 6 },
+  { id: 6, name: "Jordan", type: "Dad Hat", price: 14000, img: "/gorra4.jpg",stock: 1 },
 
 
 
@@ -28,7 +28,18 @@ export default function Home() {
     : dbProducts.filter(p => p.type === activeCategory);
 
   // Funciones del carrito
-  const addToCart = (product) => {
+const addToCart = (product) => {
+    // Primero, verificamos cuántas de estas gorras ya hay en el carrito
+    const currentCartItem = cart.find(item => item.id === product.id);
+    const currentQuantity = currentCartItem ? currentCartItem.quantity : 0;
+
+    // Si la cantidad en el carrito ya es igual o mayor al stock, frenamos la acción
+    if (currentQuantity >= product.stock) {
+      alert(`¡Ups! Solo nos quedan ${product.stock} unidades de este modelo.`);
+      return;
+    }
+
+    // Si hay stock, lo agregamos normalmente
     setCart((prev) => {
       const exists = prev.find((item) => item.id === product.id);
       if (exists) {
@@ -40,7 +51,6 @@ export default function Home() {
     });
     setIsCartOpen(true);
   };
-
   const removeFromCart = (id) => {
     setCart((prev) => prev.filter((item) => item.id !== id));
   };
@@ -172,8 +182,27 @@ export default function Home() {
               <p className="product-type">{product.type}</p>
               <h3 className="product-name">{product.name}</h3>
               <p className="product-price">${product.price.toLocaleString("es-AR")}</p>
-              <button className="btn-add" onClick={() => addToCart(product)}>
-                Agregar al carrito
+              
+              {/* Texto que muestra el stock dinámicamente */}
+              <p style={{ 
+                fontSize: '0.8rem', 
+                color: product.stock > 0 ? 'var(--text-secondary)' : '#ff4444', 
+                marginBottom: '12px' 
+              }}>
+                {product.stock > 0 ? `Stock disponible: ${product.stock}` : "Sin stock"}
+              </p>
+
+              {/* Botón inteligente que se desactiva si no hay stock */}
+              <button 
+                className="btn-add" 
+                onClick={() => addToCart(product)}
+                disabled={product.stock === 0}
+                style={{ 
+                  opacity: product.stock === 0 ? 0.5 : 1, 
+                  cursor: product.stock === 0 ? 'not-allowed' : 'pointer' 
+                }}
+              >
+                {product.stock === 0 ? "Agotado" : "Agregar al carrito"}
               </button>
             </div>
           </div>
