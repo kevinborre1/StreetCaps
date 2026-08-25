@@ -10,9 +10,6 @@ const dbProducts = [
   { id: 4, name: "Vintage Grey", type: "Dad Hat", price: 14000, img: "/gorra4.jpg",stock: 4 },
   { id: 5, name: "Classic White", type: "Snapback", price: 16000, img: "/gorra3.jpg",stock: 6 },
   { id: 6, name: "Jordan", type: "Dad Hat", price: 14000, img: "/gorra4.jpg",stock: 1 },
-
-
-
 ];
 
 const categories = ["Ver Todo", "Snapback", "Trucker", "Fitted", "Dad Hat"];
@@ -138,7 +135,7 @@ const addToCart = (product) => {
      {/* NUEVA SECCIÓN DE BIENVENIDA CON IMAGEN */}
       <header className="hero-section">
         <div className="hero-content">
-          <h1 className="hero-title">Estilo Urbano Premium</h1>
+          <h1 className="hero-title">Caps for your everyday style.</h1>
           <p className="hero-subtitle">
             Los clásicos del streetwear, elevados. Descubrí nuestra nueva colección de gorras y marcá la diferencia.
           </p>
