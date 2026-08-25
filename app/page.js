@@ -102,7 +102,7 @@ export default function Home() {
       
       // ACÁ PONES TU LINK DE MERCADO PAGO
       // Se saca desde la app de MP -> Cobrar con link -> Crear link sin monto fijo (tu perfil)
-      window.open("https://link.mercadopago.com.ar/streetcaps", "_blank");
+      window.open(" https://link.mercadopago.com.ar/kevinborre", "_blank");
     } catch (err) {
       console.error("Error", err);
     }
