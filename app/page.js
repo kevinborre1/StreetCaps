@@ -18,7 +18,7 @@ export default function Tienda() {
     const cargarProductos = async () => {
       try {
         // Le hacemos la petición GET a tu API de Spring Boot
-        const response = await fetch("http://localhost:8080/api/productos");
+        const response = await fetch("https://streetcapsapi.onrender.com/api/productos");
         
         if (response.ok) {
           const data = await response.json();
