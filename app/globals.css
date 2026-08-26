@@ -110,9 +110,7 @@ body {
   object-fit: cover;
 }
 
-.product-info {
-  padding: 20px;
-}
+
 
 .product-type {
   font-size: 0.8rem;
@@ -338,4 +336,33 @@ body {
 
 .btn-mercadopago:hover {
   background-color: #0088c4;
+}
+/* --- CORRECCIÓN DEFINITIVA PARA LAS IMÁGENES Y TARJETAS --- */
+
+.product-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column; /* Hace que los elementos se acomoden en columna */
+  height: 100%;           /* Ocupa todo el alto de la celda de la grilla */
+}
+
+/* Forzamos un contenedor estricto para que la foto nunca se estire de más */
+.product-image {
+  width: 100%;
+  height: 260px;          /* Altura fija idéntica para todas las tarjetas */
+  object-fit: cover;      /* Recorta los excesos sutilmente para rellenar sin deformar */
+  object-position: center;/* Centra el enfoque de la gorra */
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Estructura interna de la tarjeta para alinear los botones abajo */
+.product-info {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;           /* Ocupa el espacio restante */
+  justify-content: space-between; /* Empuja el botón de compra al fondo */
 }
