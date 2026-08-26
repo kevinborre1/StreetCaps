@@ -61,7 +61,7 @@ const addToCart = (product) => {
     setCart((prev) => prev.filter((item) => item.id !== id));
   };
 
-  const total = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const total = cart.reduce((acc, item) => acc + item.precio * item.quantity, 0);
 
   // Redirección a WhatsApp
   const handleCheckout = () => {
@@ -72,7 +72,7 @@ const addToCart = (product) => {
     
     let message = "Hola Street Caps! 🧢 Quiero hacer el siguiente pedido:\n\n";
     cart.forEach((item) => {
-      message += `- ${item.name} (${item.type}) x${item.quantity} - $${item.price * item.quantity}\n`;
+      message += `- ${item.nombre} (${item.tipo}) x${item.quantity} - $${item.precio * item.quantity}\n`;
     });
     message += `\n*Total a pagar: $${total}*\n\nMe gustaría coordinar el pago y el envío.`;
     
@@ -84,7 +84,7 @@ const addToCart = (product) => {
     
     let message = "Hola Street Caps! 🧢 Quiero hacer el siguiente pedido:\n\n";
     cart.forEach((item) => {
-      message += `- ${item.name} (${item.type}) x${item.quantity} - $${item.price * item.quantity}\n`;
+      message += `- ${item.nombre} (${item.tipo}) x${item.quantity} - $${item.precio * item.quantity}\n`;
     });
     message += `\n*Total a pagar: $${total}*\n\nMe gustaría coordinar el pago y el envío.`;
     
@@ -105,18 +105,15 @@ const addToCart = (product) => {
     
     let message = "Hola Street Caps! 🧢 Ya realicé el pago de mi pedido:\n\n";
     cart.forEach((item) => {
-      message += `- ${item.name} (${item.type}) x${item.quantity}\n`;
+      message += `- ${item.nombre} (${item.tipo}) x${item.quantity}\n`;
     });
     message += `\n*Total pagado: $${total}*`;
     
     try {
       // Copiamos el pedido al portapapeles para que te lo manden con el comprobante
       await navigator.clipboard.writeText(message);
+      alert("¡Pedido copiado! Te redirigimos al chat de WhatsApp. Solo tenés que poner 'Pegar' y enviarnos el mensaje con tu comprobante.");
       
-      // Alerta con instrucciones claras para el cliente
-      alert(`El total de tu pedido es $${total}.\n\nTe vamos a redirigir a Mercado Pago. Por favor, ingresá este monto exacto.\n\n(El detalle de tu pedido se copió automáticamente para que nos lo mandes junto con el comprobante).`);
-      
-      // ACÁ PONES TU LINK DE MERCADO PAGO
       // Se saca desde la app de MP -> Cobrar con link -> Crear link sin monto fijo (tu perfil)
       window.open(" https://link.mercadopago.com.ar/kevinborre", "_blank");
     } catch (err) {
@@ -183,7 +180,7 @@ const addToCart = (product) => {
           <div key={product.id} className="product-card">
           {/* Usamos imagenUrl en vez de img */}
         <img src={product.imagenUrl} alt={product.nombre} className="product-image" />
-        
+
         <div className="product-info">
           {/* Usamos tipo, nombre y precio */}
           <p className="product-type">{product.tipo}</p>
@@ -229,11 +226,11 @@ const addToCart = (product) => {
               cart.map((item) => (
                 <div key={item.id} className="cart-item">
                   <div>
-                    <p style={{ fontWeight: 'bold' }}>{item.name}</p>
+                    <p style={{ fontWeight: 'bold' }}>{item.nombre}</p>
                     <p style={{ fontSize: '0.8rem', color: '#a0a0a0' }}>Cant: {item.quantity}</p>
                   </div>
                   <div style={{ textAlign: 'right' }}>
-                    <p>${(item.price * item.quantity).toLocaleString("es-AR")}</p>
+                    <p>${(item.precio * item.quantity).toLocaleString("es-AR")}</p>
                     <button 
                       onClick={() => removeFromCart(item.id)}
                       style={{ background: 'none', border: 'none', color: '#ff4444', fontSize: '0.8rem', cursor: 'pointer', marginTop: '5px' }}
