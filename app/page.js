@@ -181,15 +181,7 @@ const addToCart = (product) => {
       <section className="product-grid">
         {filteredProducts.map((product) => (
           <div key={product.id} className="product-card">
-            <div className="image-placeholder">
-              {/* Usar etiqueta <img> estándar o <Image> de Next.js si tenés las rutas configuradas */}
-              {product.img ? (
-                <img src={product.img} alt={product.name} />
-              ) : (
-                <span style={{ color: '#444' }}>Foto Gorra</span>
-              )}
-            </div>
-            {/* Usamos imagenUrl en vez de img */}
+          {/* Usamos imagenUrl en vez de img */}
         <img src={product.imagenUrl} alt={product.nombre} className="product-image" />
         
         <div className="product-info">
