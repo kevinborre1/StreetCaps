@@ -9,8 +9,7 @@ const categories = ["Ver Todo", "Snapback", "Trucker", "Fitted", "Dad Hat"];
 export default function Tienda() {
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [filter, setFilter] = useState("Ver Todo");
-  
+  const [activeCategory, setActiveCategory] = useState("Ver Todo");  
   // 1. Ahora los productos son un estado dinámico (arranca vacío)
   const [dbProducts, setDbProducts] = useState([]);
 
@@ -124,6 +123,11 @@ const addToCart = (product) => {
       console.error("Error", err);
     }
   };
+
+
+    const filteredProducts = activeCategory === "Ver Todo"
+    ? dbProducts
+    : dbProducts.filter(product => product.tipo === activeCategory);
   return (
     <main>
       {/* Top Banner */}
@@ -185,33 +189,35 @@ const addToCart = (product) => {
                 <span style={{ color: '#444' }}>Foto Gorra</span>
               )}
             </div>
-            <div className="product-info">
-              <p className="product-type">{product.type}</p>
-              <h3 className="product-name">{product.name}</h3>
-              <p className="product-price">${product.price.toLocaleString("es-AR")}</p>
-              
-              {/* Texto que muestra el stock dinámicamente */}
-              <p style={{ 
-                fontSize: '0.8rem', 
-                color: product.stock > 0 ? 'var(--text-secondary)' : '#ff4444', 
-                marginBottom: '12px' 
-              }}>
-                {product.stock > 0 ? `Stock disponible: ${product.stock}` : "Sin stock"}
-              </p>
+            {/* Usamos imagenUrl en vez de img */}
+        <img src={product.imagenUrl} alt={product.nombre} className="product-image" />
+        
+        <div className="product-info">
+          {/* Usamos tipo, nombre y precio */}
+          <p className="product-type">{product.tipo}</p>
+          <h3 className="product-name">{product.nombre}</h3>
+          <p className="product-price">${product.precio.toLocaleString("es-AR")}</p>
+          
+          <p style={{ 
+            fontSize: '0.8rem', 
+            color: product.stock > 0 ? 'var(--text-secondary)' : '#ff4444', 
+            marginBottom: '12px' 
+          }}>
+            {product.stock > 0 ? `Stock disponible: ${product.stock}` : "Sin stock"}
+          </p>
 
-              {/* Botón inteligente que se desactiva si no hay stock */}
-              <button 
-                className="btn-add" 
-                onClick={() => addToCart(product)}
-                disabled={product.stock === 0}
-                style={{ 
-                  opacity: product.stock === 0 ? 0.5 : 1, 
-                  cursor: product.stock === 0 ? 'not-allowed' : 'pointer' 
-                }}
-              >
-                {product.stock === 0 ? "Agotado" : "Agregar al carrito"}
-              </button>
-            </div>
+          <button 
+            className="btn-add" 
+            onClick={() => addToCart(product)}
+            disabled={product.stock === 0}
+            style={{ 
+              opacity: product.stock === 0 ? 0.5 : 1, 
+              cursor: product.stock === 0 ? 'not-allowed' : 'pointer' 
+            }}
+          >
+            {product.stock === 0 ? "Agotado" : "Agregar al carrito"}
+          </button>
+        </div>
           </div>
         ))}
       </section>
