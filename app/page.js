@@ -4,7 +4,6 @@ import "./globals.css";
 
 // Base de datos de ejemplo (podés reemplazar las fotos con las tuyas en la carpeta /public)
 
-export const dynamic = 'force-dynamic';
 const categories = ["Ver Todo", "Snapback", "Trucker", "Fitted", "Dad Hat"];
 
 export default function Tienda() {
