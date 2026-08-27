@@ -18,8 +18,15 @@ export default function Tienda() {
   useEffect(() => {
     const cargarProductos = async () => {
       try {
-        // Le hacemos la petición GET a tu API de Spring Boot
-        const response = await fetch("https://streetcapsapi.onrender.com/api/productos");
+        // Le agregamos un timestamp a la URL y cabeceras para romper cualquier caché del navegador
+        const timestamp = new Date().getTime();
+        const response = await fetch(`https://streetcapsapi.onrender.com/api/productos?t=${timestamp}`, {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+          }
+        });
         
         if (response.ok) {
           const data = await response.json();
@@ -33,7 +40,6 @@ export default function Tienda() {
 
     cargarProductos();
   }, []); // Los corchetes vacíos significan que esto se ejecuta una sola vez al entrar
-
   // Funciones del carrito
 const addToCart = (product) => {
     // Primero, verificamos cuántas de estas gorras ya hay en el carrito
