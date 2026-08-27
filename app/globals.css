@@ -366,3 +366,38 @@ body {
   flex-grow: 1;           /* Ocupa el espacio restante */
   justify-content: space-between; /* Empuja el botón de compra al fondo */
 }
+/* Tarjetas de productos: Efecto de elevación al pasar el mouse */
+.product-card {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 12px;
+  overflow: hidden; /* Para que la imagen no se salga de los bordes redondeados */
+}
+
+.product-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* Imágenes: Ligero zoom al hacer hover en la tarjeta */
+.product-image {
+  transition: transform 0.5s ease;
+}
+
+.product-card:hover .product-image {
+  transform: scale(1.05);
+}
+
+/* Botones genéricos y pastillas de categorías */
+button {
+  transition: all 0.2s ease;
+}
+
+button:active {
+  transform: scale(0.95); /* Efecto de click "hundido" */
+}
+
+.pill.active {
+  background-color: #000;
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
