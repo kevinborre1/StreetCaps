@@ -12,11 +12,13 @@ export default function Tienda() {
   const [dbProducts, setDbProducts] = useState([]);
 
   // --- ESTADOS PARA LAS RESEÑAS ---
+  // 1. Agregamos "estrellas" a las reseñas de prueba
   const [reseñas, setReseñas] = useState([
-    { id: 1, nombre: "Juan", comentario: "¡Excelentes gorras! El envío fue súper rápido.", fecha: "15/10/2023" },
-    { id: 2, nombre: "Matias", comentario: "Muy buena calidad, 100% recomendados.", fecha: "18/10/2023" }
+    { id: 1, nombre: "Juan", comentario: "¡Excelentes gorras! El envío fue súper rápido.", fecha: "15/10/2023", estrellas: 5 },
+    { id: 2, nombre: "Matias", comentario: "Muy buena calidad, 100% recomendados.", fecha: "18/10/2023", estrellas: 4 }
   ]);
-  const [nuevaReseña, setNuevaReseña] = useState({ nombre: "", comentario: "" });
+  // 2. Agregamos "estrellas" al estado de la nueva reseña (por defecto 5)
+  const [nuevaReseña, setNuevaReseña] = useState({ nombre: "", comentario: "", estrellas: 5 });
   // --------------------------------
 
   useEffect(() => {
@@ -110,14 +112,15 @@ export default function Tienda() {
     if (!nuevaReseña.nombre.trim() || !nuevaReseña.comentario.trim()) return;
 
     const nueva = {
-      id: Date.now(), // Generamos un ID único temporal
+      id: Date.now(),
       nombre: nuevaReseña.nombre,
       comentario: nuevaReseña.comentario,
-      fecha: new Date().toLocaleDateString("es-AR") // Fecha de hoy
+      estrellas: nuevaReseña.estrellas, // Guardamos las estrellas elegidas
+      fecha: new Date().toLocaleDateString("es-AR")
     };
 
-    setReseñas([nueva, ...reseñas]); // La agregamos al principio de la lista
-    setNuevaReseña({ nombre: "", comentario: "" }); // Vaciamos el formulario
+    setReseñas([nueva, ...reseñas]);
+    setNuevaReseña({ nombre: "", comentario: "", estrellas: 5 }); // Reiniciamos a 5 estrellas
     alert("¡Gracias por tu reseña!");
   };
   // ----------------------------------------
@@ -214,7 +217,7 @@ export default function Tienda() {
       </section>
 
       {/* ========================================= */}
-      {/* SECCIÓN DE RESEÑAS */}
+      {/* SECCIÓN DE RESEÑAS CON ESTRELLAS */}
       {/* ========================================= */}
       <section style={{ padding: '4rem 2rem', maxWidth: '1000px', margin: '0 auto' }}>
         <h2 className="section-title">Lo que dicen nuestros clientes</h2>
@@ -224,8 +227,26 @@ export default function Tienda() {
           display: 'flex', flexDirection: 'column', gap: '1rem', 
           marginBottom: '3rem', background: '#1a1a1a', padding: '2rem', borderRadius: '12px' 
         }}>
-          <h3 style={{ color: 'white', marginTop: 0, fontSize: '1.2rem' }}>Dejá tu experiencia</h3>
+          <h3 style={{ color: 'white', marginTop: 0, marginBottom: '5px', fontSize: '1.2rem' }}>Dejá tu experiencia</h3>
           
+          {/* SELECTOR DE ESTRELLAS */}
+          <div style={{ display: 'flex', gap: '8px', marginBottom: '10px' }}>
+            {[1, 2, 3, 4, 5].map((star) => (
+              <span 
+                key={star}
+                onClick={() => setNuevaReseña({ ...nuevaReseña, estrellas: star })}
+                style={{ 
+                  cursor: 'pointer', 
+                  fontSize: '1.8rem', 
+                  color: star <= nuevaReseña.estrellas ? '#FFD700' : '#444', // Dorado si está seleccionada, gris oscuro si no
+                  transition: 'color 0.2s'
+                }}
+              >
+                ★
+              </span>
+            ))}
+          </div>
+
           <input
             type="text"
             placeholder="Tu nombre"
@@ -271,16 +292,30 @@ export default function Tienda() {
                 background: '#111', 
                 padding: '1.5rem', 
                 borderRadius: '10px', 
-                borderLeft: '4px solid #fff', /* Vuelve a la línea lateral que es más clásica */
+                borderLeft: '4px solid #fff',
                 display: 'flex',
                 flexDirection: 'column'
               }}>
-                <div style={{ marginBottom: '12px' }}>
-                  <strong style={{ color: 'white', fontSize: '1.1rem', display: 'block' }}>{res.nombre}</strong>
-                  <span style={{ fontSize: '0.8rem', color: '#888' }}>{res.fecha}</span>
+                <div style={{ marginBottom: '8px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <strong style={{ color: 'white', fontSize: '1.1rem' }}>{res.nombre}</strong>
+                    <span style={{ fontSize: '0.8rem', color: '#888' }}>{res.fecha}</span>
+                  </div>
+                  
+                  {/* DIBUJAMOS LAS ESTRELLAS EN LA TARJETA */}
+                  <div style={{ display: 'flex', gap: '2px', marginTop: '4px' }}>
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <span key={star} style={{ 
+                        color: star <= res.estrellas ? '#FFD700' : '#444', 
+                        fontSize: '1.1rem' 
+                      }}>
+                        ★
+                      </span>
+                    ))}
+                  </div>
                 </div>
-                {/* wordBreak: 'break-word' evita que letras repetidas (como "hhhh") rompan la tarjeta */}
-                <p style={{ color: '#ccc', margin: 0, lineHeight: '1.5', wordBreak: 'break-word' }}>
+                
+                <p style={{ color: '#ccc', margin: 0, lineHeight: '1.5', wordBreak: 'break-word', marginTop: '5px' }}>
                   "{res.comentario}"
                 </p>
               </div>
@@ -289,6 +324,7 @@ export default function Tienda() {
         </div>
       </section>
       {/* ========================================= */}
+
       <AnimatePresence>
         {isCartOpen && (
           <motion.div
