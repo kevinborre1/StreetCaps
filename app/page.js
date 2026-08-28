@@ -3,13 +3,21 @@ import { useState, useEffect } from "react";
 import "./globals.css";
 import { motion, AnimatePresence } from "framer-motion";
 
-const categories = ["Ver Todo", "Snapback", "Trucker", "Fitted", "Dad Hat"];
+const categories = ["Ver Todo", "New Era", "Chrome Hearts", "Jordan", "Belicas"];
 
 export default function Tienda() {
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState("Ver Todo");
   const [dbProducts, setDbProducts] = useState([]);
+
+  // --- ESTADOS PARA LAS RESEÑAS ---
+  const [reseñas, setReseñas] = useState([
+    { id: 1, nombre: "Juan", comentario: "¡Excelentes gorras! El envío fue súper rápido.", fecha: "15/10/2023" },
+    { id: 2, nombre: "Matias", comentario: "Muy buena calidad, 100% recomendados.", fecha: "18/10/2023" }
+  ]);
+  const [nuevaReseña, setNuevaReseña] = useState({ nombre: "", comentario: "" });
+  // --------------------------------
 
   useEffect(() => {
     const cargarProductos = async () => {
@@ -65,7 +73,7 @@ export default function Tienda() {
   const handleCheckout = () => {
     if (cart.length === 0) return;
     
-    const phoneNumber = "1124959055"; // Número de WhatsApp de Street Caps
+    const phoneNumber = "1124959055";
     
     let message = "Hola Street Caps! 🧢 Quiero hacer el siguiente pedido:\n\n";
     cart.forEach((item) => {
@@ -75,25 +83,6 @@ export default function Tienda() {
     
     const encodedMessage = encodeURIComponent(message);
     window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, "_blank");
-  };
-
-  const handleInstagramCheckout = async () => {
-    if (cart.length === 0) return;
-    
-    let message = "Hola Street Caps! 🧢 Quiero hacer el siguiente pedido:\n\n";
-    cart.forEach((item) => {
-      message += `- ${item.nombre} (${item.tipo}) x${item.quantity} - $${item.precio * item.quantity}\n`;
-    });
-    message += `\n*Total a pagar: $${total}*\n\nMe gustaría coordinar el pago y el envío.`;
-    
-    try {
-      await navigator.clipboard.writeText(message);
-      alert("¡Pedido copiado! Te redirigimos al chat. Solo tenés que poner 'Pegar' y enviarnos el mensaje.");
-    } catch (err) {
-      console.error("No se pudo copiar automáticamente", err);
-    }
-    
-    window.open("https://ig.me/m/streetcaps.ok", "_blank");
   };
 
   const handleMercadoPagoCheckout = async () => {
@@ -114,6 +103,24 @@ export default function Tienda() {
       console.error("Error", err);
     }
   };
+
+  // --- FUNCIÓN PARA AGREGAR LA RESEÑA ---
+  const handleAgregarReseña = (e) => {
+    e.preventDefault();
+    if (!nuevaReseña.nombre.trim() || !nuevaReseña.comentario.trim()) return;
+
+    const nueva = {
+      id: Date.now(), // Generamos un ID único temporal
+      nombre: nuevaReseña.nombre,
+      comentario: nuevaReseña.comentario,
+      fecha: new Date().toLocaleDateString("es-AR") // Fecha de hoy
+    };
+
+    setReseñas([nueva, ...reseñas]); // La agregamos al principio de la lista
+    setNuevaReseña({ nombre: "", comentario: "" }); // Vaciamos el formulario
+    alert("¡Gracias por tu reseña!");
+  };
+  // ----------------------------------------
 
   const filteredProducts = activeCategory === "Ver Todo"
     ? dbProducts
@@ -206,6 +213,82 @@ export default function Tienda() {
         </AnimatePresence>
       </section>
 
+      {/* ========================================= */}
+      {/* SECCIÓN DE RESEÑAS */}
+      {/* ========================================= */}
+      <section style={{ padding: '4rem 2rem', maxWidth: '1000px', margin: '0 auto' }}>
+        <h2 className="section-title">Lo que dicen nuestros clientes</h2>
+
+        {/* Formulario para dejar reseña */}
+        <form onSubmit={handleAgregarReseña} style={{ 
+          display: 'flex', flexDirection: 'column', gap: '1rem', 
+          marginBottom: '3rem', background: '#1a1a1a', padding: '2rem', borderRadius: '12px' 
+        }}>
+          <h3 style={{ color: 'white', marginTop: 0, fontSize: '1.2rem' }}>Dejá tu experiencia</h3>
+          
+          <input
+            type="text"
+            placeholder="Tu nombre"
+            value={nuevaReseña.nombre}
+            onChange={(e) => setNuevaReseña({ ...nuevaReseña, nombre: e.target.value })}
+            required
+            style={{ 
+              padding: '12px', borderRadius: '8px', border: '1px solid #333', 
+              background: '#2a2a2a', color: 'white', fontSize: '1rem' 
+            }}
+          />
+          
+          <textarea
+            placeholder="¿Qué te parecieron nuestras gorras?"
+            value={nuevaReseña.comentario}
+            onChange={(e) => setNuevaReseña({ ...nuevaReseña, comentario: e.target.value })}
+            required
+            rows="3"
+            style={{ 
+              padding: '12px', borderRadius: '8px', border: '1px solid #333', 
+              background: '#2a2a2a', color: 'white', fontSize: '1rem', resize: 'vertical' 
+            }}
+          ></textarea>
+          
+          <button type="submit" className="btn-hero" style={{ alignSelf: 'flex-start', padding: '10px 24px', width: 'auto' }}>
+            Publicar reseña
+          </button>
+        </form>
+
+        {/* Lista de reseñas en formato tarjetas */}
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', 
+          gap: '1.5rem' 
+        }}>
+          {reseñas.length === 0 ? (
+            <p style={{ color: 'var(--text-secondary)', gridColumn: '1 / -1', textAlign: 'center' }}>
+              Aún no hay reseñas. ¡Sé el primero en comentar!
+            </p>
+          ) : (
+            reseñas.map((res) => (
+              <div key={res.id} style={{ 
+                background: '#111', 
+                padding: '1.5rem', 
+                borderRadius: '10px', 
+                borderLeft: '4px solid #fff', /* Vuelve a la línea lateral que es más clásica */
+                display: 'flex',
+                flexDirection: 'column'
+              }}>
+                <div style={{ marginBottom: '12px' }}>
+                  <strong style={{ color: 'white', fontSize: '1.1rem', display: 'block' }}>{res.nombre}</strong>
+                  <span style={{ fontSize: '0.8rem', color: '#888' }}>{res.fecha}</span>
+                </div>
+                {/* wordBreak: 'break-word' evita que letras repetidas (como "hhhh") rompan la tarjeta */}
+                <p style={{ color: '#ccc', margin: 0, lineHeight: '1.5', wordBreak: 'break-word' }}>
+                  "{res.comentario}"
+                </p>
+              </div>
+            ))
+          )}
+        </div>
+      </section>
+      {/* ========================================= */}
       <AnimatePresence>
         {isCartOpen && (
           <motion.div
