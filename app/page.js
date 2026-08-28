@@ -254,7 +254,7 @@ export default function Tienda() {
                   Pedir por WhatsApp
                 </button>
                 <button className="btn-mercadopago" onClick={handleMercadoPagoCheckout}>
-                  Pagar con Naranjax
+                  Pagar con Mercado Pago
                 </button>
               </div>
             )}
