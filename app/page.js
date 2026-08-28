@@ -109,7 +109,7 @@ export default function Tienda() {
       await navigator.clipboard.writeText(message);
       alert("¡Pedido copiado! Te redirigimos al chat de WhatsApp. Solo tenés que poner 'Pegar' y enviarnos el mensaje con tu comprobante.");
       
-      window.open("https://link.mercadopago.com.ar/kevinborre", "_blank");
+      window.open("https://r.naranjax.com/L5kHhowz", "_blank");
     } catch (err) {
       console.error("Error", err);
     }
@@ -254,7 +254,7 @@ export default function Tienda() {
                   Pedir por WhatsApp
                 </button>
                 <button className="btn-mercadopago" onClick={handleMercadoPagoCheckout}>
-                  Pagar con Mercado Pago
+                  Pagar con Naranjax
                 </button>
               </div>
             )}
