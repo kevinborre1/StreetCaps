@@ -65,7 +65,7 @@ export default function Tienda() {
   const handleCheckout = () => {
     if (cart.length === 0) return;
     
-    const phoneNumber = "5491133763050"; 
+    const phoneNumber = "1124959055"; // Número de WhatsApp de Street Caps
     
     let message = "Hola Street Caps! 🧢 Quiero hacer el siguiente pedido:\n\n";
     cart.forEach((item) => {
