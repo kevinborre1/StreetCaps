@@ -114,7 +114,7 @@ export default function Tienda() {
     cart.forEach((item) => {
       message += `- ${item.nombre} (${item.tipo}) x${item.quantity} - $${item.precio * item.quantity}\n`;
     });
-    message += `\n*Total a pagar: $${total}*\n\nMe gustaría coordinar el pago y el envío.`;
+    message += `\n*Total a pagar: $${total}*\n\nMe gustaría coordinar el pago y el envio. Me pasarias tu alias. Gracias!`;
     
     const encodedMessage = encodeURIComponent(message);
     window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, "_blank");
