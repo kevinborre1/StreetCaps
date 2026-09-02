@@ -11,13 +11,9 @@ export default function Tienda() {
   const [activeCategory, setActiveCategory] = useState("Ver Todo");
   const [dbProducts, setDbProducts] = useState([]);
 
-  // --- ESTADOS PARA LAS RESEÑAS ---
+  
   // 1. Agregamos "estrellas" a las reseñas de prueba
-  const [reseñas, setReseñas] = useState([
-    { id: 1, nombre: "Juan", comentario: "¡Excelentes gorras! El envío fue súper rápido.", fecha: "15/10/2023", estrellas: 5 },
-    { id: 2, nombre: "Matias", comentario: "Muy buena calidad, 100% recomendados.", fecha: "18/10/2023", estrellas: 4 }
-  ]);
-  // 2. Agregamos "estrellas" al estado de la nueva reseña (por defecto 5)
+  const [reseñas, setReseñas] = useState([]); // Arranca vacío
   const [nuevaReseña, setNuevaReseña] = useState({ nombre: "", comentario: "", estrellas: 5 });
   // --------------------------------
 
@@ -143,25 +139,56 @@ export default function Tienda() {
     }
   };
 
-  // --- FUNCIÓN PARA AGREGAR LA RESEÑA ---
-  const handleAgregarReseña = (e) => {
+  // 2. Traer las reseñas al cargar la página
+  useEffect(() => {
+    const cargarReseñas = async () => {
+      try {
+        const response = await fetch("");
+        if (response.ok) {
+          const data = await response.json();
+          setReseñas(data.reverse()); // Las damos vuelta para ver las más nuevas primero
+        }
+      } catch (error) {
+        console.error("Error al cargar reseñas:", error);
+      }
+    };
+    cargarReseñas();
+  }, []);
+
+  // 3. Modificamos la función para que haga el POST al backend
+  const handleAgregarReseña = async (e) => {
     e.preventDefault();
     if (!nuevaReseña.nombre.trim() || !nuevaReseña.comentario.trim()) return;
 
-    const nueva = {
-      id: Date.now(),
+    const reseñaParaBackend = {
       nombre: nuevaReseña.nombre,
       comentario: nuevaReseña.comentario,
-      estrellas: nuevaReseña.estrellas, // Guardamos las estrellas elegidas
+      estrellas: nuevaReseña.estrellas,
       fecha: new Date().toLocaleDateString("es-AR")
     };
 
-    setReseñas([nueva, ...reseñas]);
-    setNuevaReseña({ nombre: "", comentario: "", estrellas: 5 }); // Reiniciamos a 5 estrellas
-    alert("¡Gracias por tu reseña!");
-  };
-  // ----------------------------------------
+    try {
+      // Hacemos el POST a tu API
+      const response = await fetch('https://streetcapsapi.onrender.com/api/resenas', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(reseñaParaBackend)
+      });
 
+      if (response.ok) {
+        const reseñaGuardada = await response.json();
+        // Agregamos la reseña que nos devuelve la base de datos a la pantalla
+        setReseñas([reseñaGuardada, ...reseñas]);
+        setNuevaReseña({ nombre: "", comentario: "", estrellas: 5 }); 
+        alert("¡Gracias por tu reseña!");
+      }
+    } catch (error) {
+      console.error("Error al enviar la reseña:", error);
+      alert("Hubo un problema de conexión.");
+    }
+  };
   const filteredProducts = activeCategory === "Ver Todo"
     ? dbProducts
     : dbProducts.filter(product => product.tipo === activeCategory);
