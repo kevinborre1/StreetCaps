@@ -143,7 +143,7 @@ export default function Tienda() {
   useEffect(() => {
     const cargarReseñas = async () => {
       try {
-        const response = await fetch("");
+        const response = await fetch("https://streetcapsapi.onrender.com/api/resenas");
         if (response.ok) {
           const data = await response.json();
           setReseñas(data.reverse()); // Las damos vuelta para ver las más nuevas primero
@@ -169,7 +169,7 @@ export default function Tienda() {
 
     try {
       // Hacemos el POST a tu API
-      const response = await fetch('https://streetcapsapi.onrender.com/api/resenas', {
+      const response = await fetch("https://streetcapsapi.onrender.com/api/resenas", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
