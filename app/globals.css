@@ -401,3 +401,11 @@ button:active {
   color: #fff;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
+
+carrusel-fotos::-webkit-scrollbar {
+  display: none;
+}
+.carrusel-fotos {
+  -ms-overflow-style: none;  /* IE y Edge */
+  scrollbar-width: none;  /* Firefox */
+}

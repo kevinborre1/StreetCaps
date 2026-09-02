@@ -248,7 +248,56 @@ export default function Tienda() {
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.2 }}
             >
-              <img src={product.imagenUrl} alt={product.nombre} className="product-image" />
+              {/* Contenedor deslizable (Carrusel con botones) */}
+              {product.imagenes && product.imagenes.length > 0 ? (
+                <div style={{ position: 'relative', borderRadius: '8px 8px 0 0', overflow: 'hidden' }}>
+                  
+                  {/* Botón Izquierda */}
+                  {product.imagenes.length > 1 && (
+                    <button 
+                      onClick={() => {
+                        const carrusel = document.getElementById(`carrusel-${product.id}`);
+                        carrusel.scrollBy({ left: -carrusel.clientWidth, behavior: 'smooth' });
+                      }}
+                      style={{ position: 'absolute', left: '8px', top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.6)', color: 'white', border: 'none', borderRadius: '50%', width: '30px', height: '30px', cursor: 'pointer', zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', paddingBottom: '2px' }}
+                    >
+                      &#10094;
+                    </button>
+                  )}
+
+                  {/* Carrusel */}
+                  <div id={`carrusel-${product.id}`} style={{ display: 'flex', overflowX: 'auto', scrollSnapType: 'x mandatory' }} className="carrusel-fotos">
+                    {product.imagenes.map((img, index) => (
+                      <img 
+                        key={index}
+                        src={img} 
+                        alt={`${product.nombre} vista ${index + 1}`} 
+                        className="product-image" 
+                        style={{ width: '100%', flexShrink: 0, scrollSnapAlign: 'start', objectFit: 'cover' }}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Botón Derecha */}
+                  {product.imagenes.length > 1 && (
+                    <button 
+                      onClick={() => {
+                        const carrusel = document.getElementById(`carrusel-${product.id}`);
+                        carrusel.scrollBy({ left: carrusel.clientWidth, behavior: 'smooth' });
+                      }}
+                      style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.6)', color: 'white', border: 'none', borderRadius: '50%', width: '30px', height: '30px', cursor: 'pointer', zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', paddingBottom: '2px' }}
+                    >
+                      &#10095;
+                    </button>
+                  )}
+
+                </div>
+              ) : (
+                /* Fallback por si no hay imagen */
+                <div style={{ width: '100%', height: '200px', backgroundColor: '#222', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '8px 8px 0 0' }}>
+                  <span style={{ color: '#888' }}>Sin imagen</span>
+                </div>
+              )}
 
               <div className="product-info">
                 <p className="product-type">{product.tipo}</p>
