@@ -42,41 +42,41 @@ export default function Tienda() {
   }, []);
 
   const handlePagarConMercadoPago = async () => {
-  try {
-    // 1. Mapeamos tu estado 'cart' para que coincida exactamente con las 
-    // propiedades que espera tu clase ItemCarrito en Java.
-    const itemsParaElBackend = cart.map(item => ({
-      nombre: item.nombre, // O item.title, dependiendo de cómo lo guardes en tu base
-      quantity: item.quantity,
-      precio: item.precio // Asegurate de usar la propiedad correcta del precio
-    }));
+    try {
+      const itemsParaElBackend = cart.map(item => ({
+        nombre: item.nombre,
+        quantity: item.quantity,
+        precio: item.precio
+      }));
 
-    // 2. Hacemos la petición POST a tu backend (ahora apuntando a tu compu para probar)
-    const response = await fetch('http://localhost:8080/api/crear-pago', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ items: itemsParaElBackend })
-    });
+      // Hacemos la petición POST a nuestra API de Next.js
+      const response = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ items: itemsParaElBackend })
+      });
 
-    if (!response.ok) {
-      throw new Error("Error al comunicarse con el servidor");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Error al comunicarse con el servidor");
+      }
+
+      const data = await response.json(); 
+
+      // Si nos devuelve el link, redirigimos al usuario a Mercado Pago
+      if (data.init_point) {
+        window.location.href = data.init_point;
+      } else {
+        throw new Error("No se recibió el init_point de Mercado Pago");
+      }
+
+    } catch (error) {
+      console.error("Error al iniciar el pago:", error);
+      alert(error.message || "Hubo un problema al procesar el pago.");
     }
-
-    // ¡ESTA ES LA LÍNEA QUE FALTABA!
-    const data = await response.json(); 
-
-    // 3. Si el backend nos devuelve el link, redirigimos al usuario
-    if (data.init_point) {
-      window.location.href = data.init_point;
-    }
-
-  } catch (error) {
-    console.error("Error al iniciar el pago:", error);
-    alert("Hubo un problema al procesar el pago. Intentá de nuevo.");
-  }
-};
+  };
 
   const addToCart = (product) => {
     const currentCartItem = cart.find(item => item.id === product.id);
@@ -486,19 +486,15 @@ export default function Tienda() {
                   Pedir por WhatsApp
                 </button>
               
-                {/* Copia el resumen del pedido al portapapeles y abre el link de Mercado Pago 
-                <button className="btn-mercadopago" onClick={handleMercadoPagoCheckout}>
-                  Pagar con Mercado Pago
-                </button>
+                {/* 
+                  Envía los items del carrito a la API de Next.js para procesar el pago directo
+                  <button 
+                    className="btn-mercadopago" 
+                    onClick={handlePagarConMercadoPago}
+                  >
+                    Pagar con Mercado Pago
+                  </button>
                 */}
-                {/* Envía los items del carrito al backend (localhost:8080) para procesar el pago directo 
-                <button 
-              className="btn-pagar" 
-              onClick={handlePagarConMercadoPago}
-            >
-              Pagar con Mercado Pago
-            </button>
-          */}
               </div>
             )}
           </motion.div>
