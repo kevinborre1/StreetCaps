@@ -120,7 +120,7 @@ export default function Tienda() {
     window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, "_blank");
   };
 
-  const handleMercadoPagoCheckout = async () => {
+ /* const handleMercadoPagoCheckout = async () => {
     if (cart.length === 0) return;
     
     let message = "Hola Street Caps! 🧢 Ya realicé el pago de mi pedido:\n\n";
@@ -137,7 +137,8 @@ export default function Tienda() {
     } catch (err) {
       console.error("Error", err);
     }
-  };
+  }; */
+
 
   // 2. Traer las reseñas al cargar la página
   useEffect(() => {
@@ -486,15 +487,14 @@ export default function Tienda() {
                   Pedir por WhatsApp
                 </button>
               
-                {/* 
-                  Envía los items del carrito a la API de Next.js para procesar el pago directo
+                {/* Envía los items del carrito a la API de Next.js para procesar el pago directo*/}
                   <button 
                     className="btn-mercadopago" 
                     onClick={handlePagarConMercadoPago}
                   >
                     Pagar con Mercado Pago
                   </button>
-                */}
+                
               </div>
             )}
           </motion.div>
